@@ -56,3 +56,25 @@ test('recipe name from state appears in an unordered list', async () => {
   expect(screen.getByRole('listitem')).toBeInTheDocument();
   expect(screen.getByText(recipeName)).toBeInTheDocument();
 })
+
+test('multiple recipes can be added', async () => {
+  const { instructionsInput, nameInput, submitButton } = setup();
+  const recipeName = "Lean Pockets"
+  const recipeInstructions = "place in toaster oven on 350 for 45 minutes"
+
+  await userEvent.type(instructionsInput, recipeInstructions)
+  await userEvent.type(nameInput, recipeName)
+  userEvent.click(submitButton);
+  userEvent.clear(instructionsInput)
+  userEvent.clear(nameInput)
+
+  const recipeName2 = "Pizza"
+  const recipeInstructions2 = "place oven for 15 minutes"
+  await userEvent.type(instructionsInput, recipeInstructions2)
+  await userEvent.type(nameInput, recipeName2)
+  userEvent.click(submitButton);
+
+  expect(screen.getAllByRole('listitem')).toHaveLength(2);
+  expect(screen.getByText(recipeName)).toBeInTheDocument();
+  expect(screen.getByText(recipeName2)).toBeInTheDocument();
+})
